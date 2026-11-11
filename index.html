@@ -702,6 +702,17 @@ function renderCharts(){
 }
 /* ---------- Start ---------- */
 async function start(){
+  /* Import par lien : #import=<base64url du JSON {cle:objet}> */
+  try{
+    var hm=location.hash.match(/^#import=(.+)$/);
+    if(hm){
+      var b=hm[1].replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';
+      var obj=JSON.parse(decodeURIComponent(escape(atob(b))));
+      Object.keys(obj).forEach(function(k){if(isObj(obj[k]))lsSet('d:'+k,obj[k]);});
+      history.replaceState(null,'',location.pathname+location.search);
+    }
+  }catch(e){}
+
   /* Unsent changes from an earlier visit come back first. */
   lsKeys('p:').forEach(function(k){var v=lsGet(k);if(isObj(v))PEND[k.slice(2)]=v;});
   openWeek();                                   /* usable at once, before any network answer */
